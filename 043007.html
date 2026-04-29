@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>043007</title>
+    <style>
+        :root {
+            --bg-base: #fff0f5; 
+            --pink-light: #ffccd5;
+            --pink-accent: #ff69b4; 
+            --white: #ffffff;
+            --cream: #fffaf0; 
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-base);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+
+        .floral-overlay {
+            position: fixed;
+            top: -50px; left: -50px; right: -50px; bottom: -50px;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="50" font-size="40">🌸</text><text x="60" y="20" font-size="30">🌷</text><text x="80" y="80" font-size="35">🌺</text></svg>'),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="30" y="70" font-size="30">🎀</text><text x="70" y="40" font-size="25">✨</text></svg>');
+            background-size: 300px 300px, 250px 250px;
+            background-repeat: repeat;
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(1px);
+        }
+
+       
+        .corner {
+            position: fixed;
+            z-index: 1;
+            font-size: 5rem;
+            opacity: 0.8;
+            user-select: none;
+        }
+        .top-left { top: -20px; left: -20px; transform: rotate(-15deg); }
+        .top-right { top: -30px; right: -30px; transform: rotate(20deg); }
+        .bottom-left { bottom: -20px; left: -20px; transform: rotate(10deg); }
+        .bottom-right { bottom: -30px; right: -30px; transform: rotate(-10deg); }
+
+        
+        .floating {
+            position: absolute;
+            z-index: 5;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.6;
+            user-select: none;
+            font-size: 2rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+        }
+
+        .stack-container {
+            position: relative;
+            width: 350px;
+            height: 500px;
+            z-index: 10;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--cream);
+            border-radius: 30px;
+            border: 12px solid var(--pink-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 40px rgba(255, 105, 180, 0.25);
+            transition: transform 2.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.8s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card h2 {
+            color: var(--pink-accent);
+            margin: 0 0 15px 0;
+            font-size: 1.4rem;
+            line-height: 1.2;
+        }
+
+        .card p {
+            color: #444;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .card .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .swiped {
+            transform: translateX(-180%) rotate(-40deg) translateY(50px) !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        .hint {
+            position: fixed;
+            bottom: 30px;
+            color: var(--pink-accent);
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 20;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+img {
+    width: 350px;
+    height: 520px;
+    object-fit: cover;
+    border-radius: 30px;
+    border: 12px solid #ffccd5;
+    box-shadow: 0 15px 40px rgba(255, 105, 180, 0.25);
+}
+
+.final-card {
+    cursor: default;
+    border: 12px solid var(--pink-accent);
+    box-shadow: 0 0 25px rgba(255, 105, 180, 0.4);
+}
+
+.final-card:hover {
+    transform: none !important;
+}
+
+#curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    cursor: pointer;
+
+    /* layered “curtain” look */
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,182,193,0.4), transparent 50%),
+        linear-gradient(135deg, #ffb6c1, #fff0f5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: opacity 10s ease, transform 10s ease;
+    overflow: hidden;
+}
+
+/* soft floating glow particles */
+#curtain::before,
+#curtain::after {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.4) 2px, transparent 6px);
+    background-size: 60px 60px;
+    animation: floatBg 12s linear infinite;
+    opacity: 0.3;
+}
+
+#curtain::after {
+    animation-duration: 18s;
+    opacity: 0.2;
+}
+
+@keyframes floatBg {
+    from { transform: translateY(0); }
+    to { transform: translateY(-200px); }
+}
+
+/* centered text */
+.curtain-content {
+    text-align: center;
+    color: #ff69b4;
+    z-index: 2;
+    animation: popIn 1.2s ease;
+}
+
+.curtain-content h1 {
+    font-size: 2.5rem;
+    margin: 10px 0;
+    text-shadow: 0 0 10px rgba(255,105,180,0.4);
+}
+
+.curtain-content p {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* sparkles */
+.sparkles {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    animation: float 2s ease-in-out infinite;
+}
+
+/* open animation */
+#curtain.open {
+    opacity: 0;
+    transform: scale(1.15) rotateX(15deg);
+    pointer-events: none;
+    filter: blur(8px);
+    transition: opacity 10s ease, transform 10s ease, filter 10s ease;
+}
+
+/* small entrance animation */
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+    </style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+    <source src="The Calling - Wherever you will go Instrumental(Denny).mp3" type="audio/mpeg">
+</audio>
+
+<button id="playMusic" style="
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #ff69b4;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+">
+
+
+</button>
+
+<div id="curtain" onclick="openCurtain()">
+    <div class="curtain-content">
+        <div class="sparkles">✨ 💖 ✨</div>
+        <h1>Tap to Open</h1>
+        <p>Something is waiting for you…</p>
+        <div class="sparkles">🎀 🌸 🎀</div>
+    </div>
+</div>
+
+<img src="https://i.imgur.com/pAqebw5.jpeg" alt="image">
+
+
+
+    <div class="floral-overlay"></div>
+    <div class="corner top-left">🌸🌷</div>
+    <div class="corner top-right">🌺✨</div>
+    <div class="corner bottom-left">🎀🌹</div>
+    <div class="corner bottom-right">💖🌷</div>
+
+    <div class="floating" style="top:20%; left:10%;">✨</div>
+    <div class="floating" style="top:60%; right:15%; animation-delay: 2s;">💖</div>
+    <div class="floating" style="bottom:15%; left:20%; animation-delay: 4s;">✨</div>
+
+
+
+    <div class="stack-container" id="stack">
+
+<!-- FINAL CARD -->
+<div class="card final-card">
+    <div style="font-size: 4rem;">🎂</div>
+    <h2>Happy Birthday Nigga!</h2>
+    <p>
+        I hope na kahit papaano, this small gesture of mine brought a smile on your face, the same smile you make me wear <br><br>
+        At kung sakaling dumating ang araw na nahihirapan ka, tandaan mo na hindi ka nagiisa, nandito ang pamilya mo, mga kaibigan mo at ako.
+    </p>
+    <p><small style="color: var(--pink-accent); display:block; margin-top:10px;">
+        (- Bff)
+    </small></p>
+</div>
+        
+        <!-- CARD 4 -->
+        <div class="card" onclick="swipe(this)">
+            <div class="icon">⭐</div>
+            <h2>Ang wish ko sayo</h2>
+            <p>Ngayon na birthday mo, I wish you all the happiness and love the world could ever give. <br><br>
+            Sana matupad din lahat ng pinapangarap mo sa buhay, maliit man o malaki. </p>
+            <p><small style="color: var(--pink-accent); display:block; margin-top:10px;">(4)</small></p>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="card" onclick="swipe(this)">
+            <div class="icon">🌿</div>
+            <h2>Higit pa sa lahat</h2>
+            <p>I treasure you, not just the person you are today, but all the versions of you I've known and all the ones im yet to. Sana alam mo na I will care, respect and support you in the best way I can <br><br> <I> Through work and prayer </I></p>
+            <p><small style="color: var(--pink-accent); display:block; margin-top:10px;">(3)</small></p>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="card" onclick="swipe(this)">
+            <div class="icon">🍀</div>
+            <h2>Sa totoo lang, I’m very lucky</h2>
+            <p>Di ko akalain na makakatagpo ako ng isang tulad mo, but that is something I am always thankful for. <br><br>
+            Hindi ko man madalas sinasabi pero talking to you even just for a while is enough to make my day. </p>
+            <p><small style="color: var(--pink-accent); display:block; margin-top:10px;">(2)</small></p>
+        </div>
+
+
+
+<!-- CARD 1  -->
+        <div class="card" onclick="swipe(this)">
+            <div style="font-size: 4rem; filter: drop-shadow(0 0 10px rgba(255,105,180,0.3));">🌺</div>
+            <h2 style="margin-top: 10px;">To the one and only<br>
+                <span style="font-size: 0.9rem; color: #ff69b4; font-weight: normal; display: block; margin-top: 5px;">Happy Birthday ATE!! </span>
+            </h2>
+            <p>I wanted to make this day a little bit special, something to remember your birthday by. Simple lang naman eto pero gusto ko sana ipaalala sayo gaano ka kahalaga. <br><br>
+            Sana magustuhan mo. Swipe ka lang okii? May sasabihin lang me. </p>
+            <p><small style="color: var(--pink-accent); font-weight: bold; display:block; margin-top:15px;">(1)</small></p>
+        </div>
+    </div>
+
+
+
+
+
+ <script>
+let cardsSwiped = 0;
+const totalCards = document.querySelectorAll('#stack .card').length;
+
+function swipe(card) {
+    card.classList.add('swiped');
+    cardsSwiped++;
+
+    if (cardsSwiped === totalCards) {
+        document.body.classList.add('reveal-active');
+        const hint = document.querySelector('.hint');
+        if (hint) hint.style.display = 'none';
+    }
+}
+
+const cards = document.querySelectorAll('.card');
+cards.forEach((card, index) => {
+    card.style.zIndex = index;
+    const tilt = (Math.random() - 0.5) * 6;
+    card.style.transform = `rotate(${tilt}deg)`;
+});
+
+// CURTAIN + MUSIC
+function openCurtain() {
+    document.getElementById("curtain").classList.add("open");
+
+    const music = document.getElementById("bgMusic");
+    music.volume = 0.1;   
+    music.currentTime = 0;
+    music.play();
+}
+
+// PLAY BUTTON
+document.getElementById("playMusic").addEventListener("click", function () {
+    const music = document.getElementById("bgMusic");
+    music.currentTime = 0;
+    music.play();
+});
+</script>
+
+</body>
+</html>
