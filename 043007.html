@@ -162,7 +162,7 @@ img {
     z-index: 9999;
     cursor: pointer;
 
-    /* layered “curtain” look */
+
     background:
         radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25), transparent 40%),
         radial-gradient(circle at 80% 30%, rgba(255,182,193,0.4), transparent 50%),
@@ -176,7 +176,7 @@ img {
     overflow: hidden;
 }
 
-/* soft floating glow particles */
+
 #curtain::before,
 #curtain::after {
     content: "";
@@ -199,7 +199,7 @@ img {
     to { transform: translateY(-200px); }
 }
 
-/* centered text */
+
 .curtain-content {
     text-align: center;
     color: #ff69b4;
@@ -218,14 +218,14 @@ img {
     opacity: 0.8;
 }
 
-/* sparkles */
+
 .sparkles {
     font-size: 1.5rem;
     margin: 10px 0;
     animation: float 2s ease-in-out infinite;
 }
 
-/* open animation */
+
 #curtain.open {
     opacity: 0;
     transform: scale(1.15) rotateX(15deg);
@@ -234,7 +234,7 @@ img {
     transition: opacity 10s ease, transform 10s ease, filter 10s ease;
 }
 
-/* small entrance animation */
+
 @keyframes popIn {
     from {
         opacity: 0;
@@ -297,7 +297,7 @@ img {
 
     <div class="stack-container" id="stack">
 
-<!-- FINAL CARD -->
+<!-- CARD 5 -->
 <div class="card final-card">
     <div style="font-size: 4rem;">🎂</div>
     <h2>Happy Birthday Nigga!</h2>
@@ -376,7 +376,7 @@ cards.forEach((card, index) => {
     card.style.transform = `rotate(${tilt}deg)`;
 });
 
-// CURTAIN + MUSIC
+
 function openCurtain() {
     document.getElementById("curtain").classList.add("open");
 
@@ -386,7 +386,7 @@ function openCurtain() {
     music.play();
 }
 
-// PLAY BUTTON
+
 document.getElementById("playMusic").addEventListener("click", function () {
     const music = document.getElementById("bgMusic");
     music.currentTime = 0;
